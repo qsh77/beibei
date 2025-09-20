@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(mysql:*)",
+      "Bash(curl:*)",
+      "Bash(mvn:*)",
+      "Bash(lsof:*)",
+      "Bash(kill:*)",
+      "Read(//Users/qsh/Documents/贝贝家政毕设/**)",
+      "Bash(java:*)",
+      "Bash(xargs kill:*)",
+      "Bash(find:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

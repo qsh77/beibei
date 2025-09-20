@@ -1,0 +1,123 @@
+@startuml
+left to right direction
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+
+actor 管理员 as Admin
+
+rectangle "后台管理" {
+  (登录后台) as UC_Login
+
+  ' 顶层组用例，管理员只连到这些，内部用 include 展开，利于横向布局
+  (用户管理) as UC_UserGroup
+  (阿姨管理) as UC_WorkerGroup
+  (类目管理) as UC_CategoryGroup
+  (服务管理) as UC_ServiceGroup
+  (订单管理) as UC_OrderGroup
+  (评价管理) as UC_ReviewGroup
+  (权限与角色) as UC_RoleGroup
+
+  together {
+    package "用户管理" {
+      (用户-新增) as UC_UserCreate
+      (用户-查询/列表) as UC_UserRead
+      (用户-编辑) as UC_UserUpdate
+      (用户-删除/禁用) as UC_UserDelete
+    }
+    UC_UserGroup .> UC_UserCreate : <<include>>
+    UC_UserGroup .> UC_UserRead   : <<include>>
+    UC_UserGroup .> UC_UserUpdate : <<include>>
+    UC_UserGroup .> UC_UserDelete : <<include>>
+  }
+
+  together {
+    package "阿姨管理" {
+      (阿姨-新增) as UC_WorkerCreate
+      (阿姨-查询/列表) as UC_WorkerRead
+      (阿姨-编辑) as UC_WorkerUpdate
+      (阿姨-删除/禁用) as UC_WorkerDelete
+      (阿姨-审核通过/驳回) as UC_WorkerApprove
+    }
+    UC_WorkerGroup .> UC_WorkerCreate  : <<include>>
+    UC_WorkerGroup .> UC_WorkerRead    : <<include>>
+    UC_WorkerGroup .> UC_WorkerUpdate  : <<include>>
+    UC_WorkerGroup .> UC_WorkerDelete  : <<include>>
+    UC_WorkerGroup .> UC_WorkerApprove : <<include>>
+  }
+
+  together {
+    package "类目管理" {
+      (类目-新增) as UC_CategoryCreate
+      (类目-查询/列表) as UC_CategoryRead
+      (类目-编辑) as UC_CategoryUpdate
+      (类目-删除) as UC_CategoryDelete
+    }
+    UC_CategoryGroup .> UC_CategoryCreate : <<include>>
+    UC_CategoryGroup .> UC_CategoryRead   : <<include>>
+    UC_CategoryGroup .> UC_CategoryUpdate : <<include>>
+    UC_CategoryGroup .> UC_CategoryDelete : <<include>>
+  }
+
+  together {
+    package "服务管理" {
+      (服务-新增) as UC_ServiceCreate
+      (服务-查询/列表) as UC_ServiceRead
+      (服务-编辑) as UC_ServiceUpdate
+      (服务-删除/上下架) as UC_ServiceDelete
+    }
+    UC_ServiceGroup .> UC_ServiceCreate : <<include>>
+    UC_ServiceGroup .> UC_ServiceRead   : <<include>>
+    UC_ServiceGroup .> UC_ServiceUpdate : <<include>>
+    UC_ServiceGroup .> UC_ServiceDelete : <<include>>
+  }
+
+  together {
+    package "订单管理" {
+      (订单-查询/筛选) as UC_OrderRead
+      (订单-状态干预) as UC_OrderUpdate
+      (订单-取消/关闭) as UC_OrderCancel
+      (订单-导出) as UC_OrderExport
+    }
+    UC_OrderGroup .> UC_OrderRead   : <<include>>
+    UC_OrderGroup .> UC_OrderUpdate : <<include>>
+    UC_OrderGroup .> UC_OrderCancel : <<include>>
+    UC_OrderGroup .> UC_OrderExport : <<include>>
+  }
+
+  together {
+    package "评价管理" {
+      (评价-查询) as UC_ReviewRead
+      (评价-删除) as UC_ReviewDelete
+      (评价-审核通过/驳回) as UC_ReviewApprove
+    }
+    UC_ReviewGroup .> UC_ReviewRead    : <<include>>
+    UC_ReviewGroup .> UC_ReviewDelete  : <<include>>
+    UC_ReviewGroup .> UC_ReviewApprove : <<include>>
+  }
+
+  together {
+    package "权限与角色" {
+      (角色-新增) as UC_RoleCreate
+      (角色-查询/列表) as UC_RoleRead
+      (角色-编辑) as UC_RoleUpdate
+      (角色-删除) as UC_RoleDelete
+      (分配菜单/权限) as UC_RoleGrant
+    }
+    UC_RoleGroup .> UC_RoleCreate : <<include>>
+    UC_RoleGroup .> UC_RoleRead   : <<include>>
+    UC_RoleGroup .> UC_RoleUpdate : <<include>>
+    UC_RoleGroup .> UC_RoleDelete : <<include>>
+    UC_RoleGroup .> UC_RoleGrant  : <<include>>
+  }
+}
+
+Admin --> UC_Login
+Admin --> UC_UserGroup
+Admin --> UC_WorkerGroup
+Admin --> UC_CategoryGroup
+Admin --> UC_ServiceGroup
+Admin --> UC_OrderGroup
+Admin --> UC_ReviewGroup
+Admin --> UC_RoleGroup
+@enduml
+

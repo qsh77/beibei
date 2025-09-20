@@ -1,0 +1,67 @@
+@startuml
+left to right direction
+skinparam actorStyle awesome
+skinparam packageStyle rectangle
+
+actor 用户 as Customer
+
+rectangle "用户端" {
+  (注册) as UC_Register
+  (登录/退出) as UC_Login
+
+  package "个人资料" {
+    (资料-新增/完善) as UC_ProfileCreate
+    (资料-查看) as UC_ProfileRead
+    (资料-编辑) as UC_ProfileUpdate
+    (地址-新增/删除) as UC_AddressCrud
+  }
+
+  package "服务浏览" {
+    (按类目浏览) as UC_BrowseCategory
+    (关键字搜索) as UC_Search
+  }
+
+  package "下单" {
+    (选择阿姨与时间) as UC_SelectWorker
+    (填写地址与备注) as UC_FillForm
+    (创建订单) as UC_CreateOrder
+  }
+
+  package "订单管理" {
+    (订单-查询/列表) as UC_OrderRead
+    (订单-查看详情) as UC_OrderDetail
+    (订单-取消) as UC_OrderCancel
+  }
+
+  package "评价" {
+    (发表评价) as UC_ReviewCreate
+    (查看历史评价) as UC_ReviewRead
+    (修改/删除评价) as UC_ReviewUpdateDelete
+  }
+}
+
+Customer --> UC_Register
+Customer --> UC_Login
+
+Customer --> UC_ProfileCreate
+Customer --> UC_ProfileRead
+Customer --> UC_ProfileUpdate
+Customer --> UC_AddressCrud
+
+Customer --> UC_BrowseCategory
+Customer --> UC_Search
+
+Customer --> UC_SelectWorker
+Customer --> UC_FillForm
+Customer --> UC_CreateOrder
+
+Customer --> UC_OrderRead
+Customer --> UC_OrderDetail
+Customer --> UC_OrderCancel
+
+Customer --> UC_ReviewCreate
+Customer --> UC_ReviewRead
+Customer --> UC_ReviewUpdateDelete
+
+@enduml
+
