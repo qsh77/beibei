@@ -57,7 +57,7 @@ public class AuthService {
         profile.setEmail(null); // 可选，注册时可能不填
         profile.setAddress(null); // 可选，注册时可能不填
         profile.setBirthday(null); // 可选，注册时可能不填
-        profile.setAvatar(null); // 初始无头像
+        profile.setAvatar("/uploads/avatars/default/user1.jpeg"); // 设置默认头像
 
         int profileResult = userProfileMapper.insert(profile);
         if (profileResult <= 0) {
@@ -66,8 +66,9 @@ public class AuthService {
     }
     
     /**
-     * 用户登录
+     * 用户登录 2420710313_齐世浩
      */
+
     public LoginResponse login(LoginRequest request) {
         // 根据手机号查询用户
         User user = userMapper.findByPhone(request.getPhone());
@@ -94,14 +95,15 @@ public class AuthService {
         // 构建响应
         LoginResponse response = new LoginResponse();
         response.setToken(token);
-        
+
         LoginResponse.UserInfo userInfo = new LoginResponse.UserInfo();
         userInfo.setId(user.getId());
         userInfo.setPhone(user.getPhone());
         userInfo.setRole(user.getRole());
         userInfo.setName(profile != null ? profile.getName() : "用户");
+        userInfo.setAvatar(profile != null ? profile.getAvatar() : null);
         response.setUserInfo(userInfo);
-        
+
         return response;
     }
 }

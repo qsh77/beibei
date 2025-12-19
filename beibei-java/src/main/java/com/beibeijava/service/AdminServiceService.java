@@ -29,25 +29,34 @@ public class AdminServiceService {
     /**
      * 分页查询服务列表
      */
+    /**
+     * 分页查询服务列表
+     */
     public PageResult<ServiceEntity> getServiceList(ServiceQueryRequest request) {
         // 计算偏移量
         int offset = (request.getPage() - 1) * request.getPageSize();
 
         // 查询数据
         List<ServiceEntity> services = serviceMapper.findAllWithPaging(
-            request.getKeyword(),
-            request.getStatus(),
-            request.getIsHot(),
-            offset,
-            request.getPageSize()
-        );
+                request.getKeyword(),
+                request.getStatus(),
+                null,
+                offset,
+                request.getPageSize());
+
+        // 获取销量前三的服务ID
+        List<Long> topServiceIds = serviceMapper.findTopServiceIds(3);
+
+        // 动态设置热门状态
+        for (ServiceEntity service : services) {
+            service.setHot(topServiceIds.contains(service.getId()) ? 1 : 0);
+        }
 
         // 查询总数
         Long total = serviceMapper.countAll(
-            request.getKeyword(),
-            request.getStatus(),
-            request.getIsHot()
-        );
+                request.getKeyword(),
+                request.getStatus(),
+                request.getIsHot());
 
         return new PageResult<>(services, total, request.getPage(), request.getPageSize());
     }
@@ -56,7 +65,12 @@ public class AdminServiceService {
      * 根据ID获取服务
      */
     public ServiceEntity getServiceById(Long id) {
-        return serviceMapper.findByIdForAdmin(id);
+        ServiceEntity service = serviceMapper.findByIdForAdmin(id);
+        if (service != null) {
+            List<Long> topServiceIds = serviceMapper.findTopServiceIds(3);
+            service.setHot(topServiceIds.contains(service.getId()) ? 1 : 0);
+        }
+        return service;
     }
 
     /**
@@ -69,7 +83,7 @@ public class AdminServiceService {
         service.setDescription(request.getDescription());
         service.setBasePrice(request.getBasePrice());
         service.setUnit(request.getUnit());
-        service.setHot(request.getHot());
+        service.setHot(0); // 默认为非热门，由销量决定
         service.setStatus(1);
         service.setCreatedAt(LocalDateTime.now());
 
@@ -93,11 +107,12 @@ public class AdminServiceService {
         service.setDescription(request.getDescription());
         service.setBasePrice(request.getBasePrice());
         service.setUnit(request.getUnit());
-        service.setHot(request.getHot());
+        // hot 字段由销量决定，不接受手动更新，或者保持原状
+        service.setHot(existing.getHot());
         service.setStatus(request.getStatus());
 
         serviceMapper.update(service);
-        return serviceMapper.findByIdForAdmin(request.getId());
+        return getServiceById(request.getId());
     }
 
     /**
@@ -122,18 +137,6 @@ public class AdminServiceService {
             throw new RuntimeException("服务不存在");
         }
         serviceMapper.updateStatus(id, status);
-    }
-
-    /**
-     * 更新热门状态
-     */
-    @Transactional
-    public void updateServiceHot(Long id, Integer hot) {
-        ServiceEntity service = serviceMapper.findByIdForAdmin(id);
-        if (service == null) {
-            throw new RuntimeException("服务不存在");
-        }
-        serviceMapper.updateHot(id, hot);
     }
 
 }

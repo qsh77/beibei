@@ -1,0 +1,37 @@
+@startuml
+skinparam backgroundColor transparent
+skinparam monochrome true
+title 服务评价功能时序图
+
+actor 用户
+participant "前端页面\nOrders.vue" as Frontend
+participant "ReviewController" as RC
+participant "ReviewService" as RS
+database "数据库" as DB
+
+用户 -> Frontend: 点击评价按钮
+Frontend -> RC: GET /api/reviews/order/{orderId}
+RC -> RS: getReviewByOrderId(orderId)
+RS -> DB: SELECT * FROM review WHERE order_id=?
+DB --> RS: null(未评价)
+RS --> RC: null
+RC --> Frontend: 返回未评价状态
+Frontend --> 用户: 打开评价弹窗
+
+用户 -> Frontend: 填写评分和评价内容
+用户 -> Frontend: 提交评价
+Frontend -> RC: POST /api/reviews
+RC -> RS: createReview(request)
+RS -> DB: 验证订单存在且状态为DONE
+DB --> RS: 订单信息
+RS -> DB: 验证订单未评价
+DB --> RS: 确认未评价
+RS -> DB: INSERT INTO review
+DB --> RS: 评价创建成功
+RS -> DB: UPDATE worker SET score=新评分
+DB --> RS: 更新成功
+RS --> RC: Review对象
+RC --> Frontend: 返回评价成功
+Frontend --> 用户: 显示评价成功
+
+@enduml

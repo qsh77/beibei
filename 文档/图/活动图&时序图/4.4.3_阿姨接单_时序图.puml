@@ -1,0 +1,53 @@
+@startuml
+skinparam backgroundColor transparent
+skinparam monochrome true
+title 阿姨接单与服务执行功能时序图
+
+actor 阿姨
+participant "阿姨端页面\nworker/Orders.vue" as Frontend
+participant "WorkerOrderController" as WOC
+participant "WorkerOrderService" as WOS
+database "数据库" as DB
+
+== 主动接单流程 ==
+
+阿姨 -> Frontend: 查看可接订单
+Frontend -> WOC: GET /api/worker/orders/available
+WOC -> WOS: getAvailableOrders()
+WOS -> DB: 查询可接订单(根据阿姨档期过滤)
+DB --> WOS: 可接订单列表
+WOS --> WOC: List<OrderListVO>
+WOC --> Frontend: 返回可接订单
+Frontend --> 阿姨: 展示可接订单列表
+
+阿姨 -> Frontend: 点击接单
+Frontend -> WOC: PUT /api/worker/orders/{id}/take
+WOC -> WOS: takeOrder(orderId)
+WOS -> DB: 验证订单状态为CREATED
+WOS -> DB: UPDATE order SET worker_id=?, status='ASSIGNED'
+DB --> WOS: 更新成功
+WOS --> WOC: 接单成功
+WOC --> Frontend: 返回接单成功
+Frontend --> 阿姨: 显示接单成功
+
+== 服务执行流程 ==
+
+阿姨 -> Frontend: 开始服务
+Frontend -> WOC: PUT /api/worker/orders/{id}/accept
+WOC -> WOS: acceptOrder(orderId)
+WOS -> DB: UPDATE order SET status='DOING'
+DB --> WOS: 更新成功
+WOS --> WOC: 状态更新成功
+WOC --> Frontend: 返回更新成功
+Frontend --> 阿姨: 显示服务已开始
+
+阿姨 -> Frontend: 完成服务
+Frontend -> WOC: PUT /api/worker/orders/{id}/complete
+WOC -> WOS: completeOrder(orderId)
+WOS -> DB: UPDATE order SET status='DONE'
+DB --> WOS: 更新成功
+WOS --> WOC: 订单完成
+WOC --> Frontend: 返回订单完成
+Frontend --> 阿姨: 显示服务已完成
+
+@enduml

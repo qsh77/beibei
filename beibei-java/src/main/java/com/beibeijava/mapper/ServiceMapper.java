@@ -12,26 +12,25 @@ import java.util.List;
  */
 @Mapper
 public interface ServiceMapper {
-    
+
     /**
      * 查询所有启用的服务
      */
     @Select("SELECT * FROM service WHERE status = 1 ORDER BY hot DESC, created_at DESC")
     List<ServiceEntity> findAllActive();
-    
+
     /**
      * 根据ID查询服务
      */
     @Select("SELECT * FROM service WHERE id = #{id} AND status = 1")
     ServiceEntity findById(@Param("id") Long id);
-    
-    
+
     /**
      * 查询热门服务
      */
     @Select("SELECT * FROM service WHERE status = 1 AND hot = 1 ORDER BY rating DESC, created_at DESC LIMIT #{limit}")
     List<ServiceEntity> findHotServices(@Param("limit") int limit);
-    
+
     /**
      * 搜索服务
      */
@@ -89,49 +88,55 @@ public interface ServiceMapper {
      * 分页查询服务（管理员版本，支持条件筛选）
      */
     @Select("""
-        <script>
-        SELECT * FROM service
-        <where>
-            <if test="keyword != null and keyword != ''">
-                AND (name LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
-            </if>
-            <if test="status != null">
-                AND status = #{status}
-            </if>
-            <if test="isHot != null">
-                AND hot = #{isHot}
-            </if>
-        </where>
-        ORDER BY created_at DESC
-        LIMIT #{offset}, #{pageSize}
-        </script>
-        """)
+            <script>
+            SELECT * FROM service
+            <where>
+                <if test="keyword != null and keyword != ''">
+                    AND (name LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
+                </if>
+                <if test="status != null">
+                    AND status = #{status}
+                </if>
+                <if test="isHot != null">
+                    AND hot = #{isHot}
+                </if>
+            </where>
+            ORDER BY created_at DESC
+            LIMIT #{offset}, #{pageSize}
+            </script>
+            """)
     List<ServiceEntity> findAllWithPaging(@Param("keyword") String keyword,
-                                          @Param("status") Integer status,
-                                          @Param("isHot") Integer isHot,
-                                          @Param("offset") int offset,
-                                          @Param("pageSize") Integer pageSize);
+            @Param("status") Integer status,
+            @Param("isHot") Integer isHot,
+            @Param("offset") int offset,
+            @Param("pageSize") Integer pageSize);
 
     /**
      * 统计服务总数（管理员版本，支持条件筛选）
      */
     @Select("""
-        <script>
-        SELECT COUNT(*) FROM service
-        <where>
-            <if test="keyword != null and keyword != ''">
-                AND (name LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
-            </if>
-            <if test="status != null">
-                AND status = #{status}
-            </if>
-            <if test="isHot != null">
-                AND hot = #{isHot}
-            </if>
-        </where>
-        </script>
-        """)
+            <script>
+            SELECT COUNT(*) FROM service
+            <where>
+                <if test="keyword != null and keyword != ''">
+                    AND (name LIKE CONCAT('%', #{keyword}, '%') OR description LIKE CONCAT('%', #{keyword}, '%'))
+                </if>
+                <if test="status != null">
+                    AND status = #{status}
+                </if>
+                <if test="isHot != null">
+                    AND hot = #{isHot}
+                </if>
+            </where>
+            </script>
+            """)
     Long countAll(@Param("keyword") String keyword,
-                  @Param("status") Integer status,
-                  @Param("isHot") Integer isHot);
+            @Param("status") Integer status,
+            @Param("isHot") Integer isHot);
+
+    /**
+     * 查询销量前几的服务ID
+     */
+    @Select("SELECT service_id FROM `order` WHERE status != 'CANCELED' GROUP BY service_id ORDER BY COUNT(*) DESC LIMIT #{limit}")
+    List<Long> findTopServiceIds(@Param("limit") int limit);
 }

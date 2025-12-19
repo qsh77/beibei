@@ -41,6 +41,13 @@ public class WorkerListVO {
      */
     private String avatar;
 
+    public String getAvatar() {
+        if (avatar != null && !avatar.startsWith("http") && !avatar.startsWith("/")) {
+            return "/" + avatar;
+        }
+        return avatar;
+    }
+
     /**
      * 等级(1-5星)
      */
@@ -92,14 +99,21 @@ public class WorkerListVO {
      * 等级描述
      */
     public String getLevelText() {
-        if (level == null) return "未评级";
+        if (level == null)
+            return "未评级";
         switch (level) {
-            case 1: return "一星";
-            case 2: return "二星";
-            case 3: return "三星";
-            case 4: return "四星";
-            case 5: return "五星";
-            default: return "未知等级";
+            case 1:
+                return "一星";
+            case 2:
+                return "二星";
+            case 3:
+                return "三星";
+            case 4:
+                return "四星";
+            case 5:
+                return "五星";
+            default:
+                return "未知等级";
         }
     }
 
@@ -107,12 +121,17 @@ public class WorkerListVO {
      * 性别描述
      */
     public String getGenderText() {
-        if (gender == null) return "未设置";
+        if (gender == null)
+            return "未设置";
         switch (gender) {
-            case "M": return "男";
-            case "F": return "女";
-            case "U": return "未设置";
-            default: return "未知";
+            case "M":
+                return "男";
+            case "F":
+                return "女";
+            case "U":
+                return "未设置";
+            default:
+                return "未知";
         }
     }
 
@@ -120,7 +139,8 @@ public class WorkerListVO {
      * 完成率
      */
     public Double getCompletionRate() {
-        if (totalOrders == null || totalOrders == 0) return 0.0;
+        if (totalOrders == null || totalOrders == 0)
+            return 0.0;
         return (completedOrders == null ? 0 : completedOrders.doubleValue()) / totalOrders.doubleValue() * 100;
     }
 }

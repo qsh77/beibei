@@ -60,9 +60,9 @@ public class CreateWorkerRequest {
      * 等级(1-5星)
      */
     @NotNull(message = "等级不能为空")
-    @Min(value = 1, message = "等级不能小于1")
+    @Min(value = 0, message = "等级不能小于0")
     @Max(value = 5, message = "等级不能大于5")
-    private Integer level;
+    private Integer level = 0;
 
     /**
      * 工作年限
@@ -83,7 +83,7 @@ public class CreateWorkerRequest {
      */
     @DecimalMin(value = "0.00", message = "评分不能小于0")
     @DecimalMax(value = "5.00", message = "评分不能大于5")
-    private BigDecimal score = new BigDecimal("5.00");
+    private BigDecimal score = new BigDecimal("0.00");
 
     /**
      * 状态：1-启用，0-禁用

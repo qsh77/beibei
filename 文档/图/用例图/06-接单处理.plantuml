@@ -1,0 +1,39 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam defaultFontName Microsoft YaHei
+
+title 接单处理用例图
+
+actor "家政阿姨" as Worker
+
+rectangle "接单处理" {
+    (接单处理) as main
+    (查看待接订单)
+    (接受订单)
+    (开始服务)
+    (完成服务)
+
+    (按时间筛选)
+    (确认服务时间)
+    (签到确认)
+    (填写服务记录)
+}
+
+Worker --> main
+
+main <.. (查看待接订单) : <<扩展>>
+main <.. (接受订单) : <<扩展>>
+main <.. (开始服务) : <<扩展>>
+main <.. (完成服务) : <<扩展>>
+
+(查看待接订单) <.. (按时间筛选) : <<扩展>>
+
+(接受订单) <.. (确认服务时间) : <<包含>>
+
+(开始服务) <.. (签到确认) : <<包含>>
+
+(完成服务) <.. (填写服务记录) : <<扩展>>
+
+@enduml

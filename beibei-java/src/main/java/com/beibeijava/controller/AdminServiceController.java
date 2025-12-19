@@ -101,17 +101,4 @@ public class AdminServiceController {
         }
     }
 
-    @PutMapping("/{id}/hot")
-    @Operation(summary = "更新热门状态", description = "设置或取消热门服务")
-    public Result<Void> updateServiceHot(
-            @Parameter(description = "服务ID") @PathVariable Long id,
-            @Parameter(description = "热门状态：1-是，0-否") @RequestParam Integer hot) {
-        try {
-            adminServiceService.updateServiceHot(id, hot);
-            return Result.success("热门状态更新成功", null);
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
-    }
-
 }

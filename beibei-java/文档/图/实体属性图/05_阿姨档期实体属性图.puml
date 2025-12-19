@@ -1,0 +1,28 @@
+@startuml 阿姨档期实体属性图
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam rectangle {
+    BackgroundColor white
+    BorderColor black
+}
+skinparam usecase {
+    BackgroundColor white
+    BorderColor black
+}
+
+rectangle "阿姨档期" as center
+
+usecase "<u>id</u>" as id
+usecase "worker_id" as workerId
+usecase "date" as date
+usecase "time_slot" as timeSlot
+usecase "status" as status
+usecase "created_at" as createdAt
+
+center -- id
+center -- workerId
+center -- date
+center -- timeSlot
+center -- status
+center -- createdAt
+@enduml

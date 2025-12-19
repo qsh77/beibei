@@ -1,0 +1,32 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam defaultFontName Microsoft YaHei
+
+title 预约服务用例图
+
+actor "普通用户" as User
+
+rectangle "预约服务" {
+    (预约服务) as main
+    (选择服务项目)
+    (选择服务时间)
+    (选择服务地址)
+    (确认预约)
+
+    (新增地址)
+    (选择已有地址)
+}
+
+User --> main
+
+main <.. (选择服务项目) : <<包含>>
+main <.. (选择服务时间) : <<包含>>
+main <.. (选择服务地址) : <<包含>>
+main <.. (确认预约) : <<包含>>
+
+(选择服务地址) <.. (新增地址) : <<扩展>>
+(选择服务地址) <.. (选择已有地址) : <<扩展>>
+
+@enduml

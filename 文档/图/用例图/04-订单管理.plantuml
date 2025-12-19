@@ -1,0 +1,45 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam defaultFontName Microsoft YaHei
+
+title 订单管理用例图
+
+actor "普通用户" as User
+actor "系统管理员" as Admin
+
+rectangle "订单管理" {
+    (订单管理) as main
+    (查看订单列表)
+    (查看订单详情)
+    (取消订单)
+    (评价服务)
+    (订单分配)
+
+    (按状态筛选)
+    (填写取消原因)
+    (评分)
+    (填写评价内容)
+    (选择阿姨)
+}
+
+User --> main
+Admin --> main
+
+main <.. (查看订单列表) : <<扩展>>
+main <.. (查看订单详情) : <<扩展>>
+main <.. (取消订单) : <<扩展>>
+main <.. (评价服务) : <<扩展>>
+main <.. (订单分配) : <<扩展>>
+
+(查看订单列表) <.. (按状态筛选) : <<扩展>>
+
+(取消订单) <.. (填写取消原因) : <<包含>>
+
+(评价服务) <.. (评分) : <<包含>>
+(评价服务) <.. (填写评价内容) : <<扩展>>
+
+(订单分配) <.. (选择阿姨) : <<包含>>
+
+@enduml

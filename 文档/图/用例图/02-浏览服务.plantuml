@@ -1,0 +1,33 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam defaultFontName Microsoft YaHei
+
+title 浏览服务用例图
+
+actor "普通用户" as User
+
+rectangle "浏览服务" {
+    (浏览服务) as main
+    (查看服务列表)
+    (查看服务详情)
+    (搜索服务)
+
+    (按分类筛选)
+    (按价格排序)
+    (查看服务评价)
+}
+
+User --> main
+
+main <.. (查看服务列表) : <<扩展>>
+main <.. (查看服务详情) : <<扩展>>
+main <.. (搜索服务) : <<扩展>>
+
+(查看服务列表) <.. (按分类筛选) : <<扩展>>
+(查看服务列表) <.. (按价格排序) : <<扩展>>
+
+(查看服务详情) <.. (查看服务评价) : <<扩展>>
+
+@enduml

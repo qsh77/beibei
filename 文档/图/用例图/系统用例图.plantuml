@@ -1,0 +1,50 @@
+@startuml
+  left to right direction
+  skinparam packageStyle rectangle
+  skinparam actorStyle awesome
+  skinparam defaultFontName Microsoft YaHei
+  skinparam rectangle {
+    MinimumWidth 800
+  }
+
+  title 贝贝家政服务系统用例图
+
+  actor "普通用户" as User
+  actor "家政阿姨" as Worker
+
+  rectangle "                    贝贝家政服务系统                    " {
+      (用户认证)
+      (浏览服务)
+      (预约服务)
+      (订单管理)
+      (个人中心)
+      (接单处理)
+      (工作管理)
+      (人员管理)
+      (服务管理)
+      (数据统计)
+  }
+
+  actor "系统管理员" as Admin
+
+  ' 普通用户用例 (左侧)
+  User --> (用户认证)
+  User --> (浏览服务)
+  User --> (预约服务)
+  User --> (订单管理)
+  User --> (个人中心)
+
+  ' 家政阿姨用例 (左侧)
+  Worker --> (用户认证)
+  Worker --> (接单处理)
+  Worker --> (工作管理)
+  Worker --> (个人中心)
+
+  ' 管理员用例 (右侧，用反向箭头)
+  (用户认证) <-- Admin
+  (人员管理) <-- Admin
+  (服务管理) <-- Admin
+  (订单管理) <-- Admin
+  (数据统计) <-- Admin
+
+  @enduml

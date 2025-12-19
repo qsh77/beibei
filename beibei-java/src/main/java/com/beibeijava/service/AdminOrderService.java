@@ -1,7 +1,6 @@
 package com.beibeijava.service;
 
 import com.beibeijava.dto.OrderQueryRequest;
-import com.beibeijava.dto.UpdateOrderStatusRequest;
 import com.beibeijava.mapper.OrderMapper;
 import com.beibeijava.vo.OrderDetailVO;
 import com.beibeijava.vo.OrderListVO;
@@ -9,10 +8,7 @@ import com.beibeijava.vo.OrderStatsVO;
 import com.beibeijava.vo.PageResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -68,68 +64,4 @@ public class AdminOrderService {
         return orderMapper.getOrderStats();
     }
 
-    /**
-     * 更新订单状态
-     */
-    @Transactional
-    public void updateOrderStatus(UpdateOrderStatusRequest request) {
-        // 验证状态是否有效
-        List<String> validStatuses = Arrays.asList("CREATED", "ASSIGNED", "DOING", "DONE", "CANCELED");
-        if (!validStatuses.contains(request.getStatus())) {
-            throw new RuntimeException("无效的订单状态");
-        }
-
-        // 获取当前订单状态
-        com.beibeijava.entity.Order currentOrder = orderMapper.findById(request.getOrderId());
-        if (currentOrder == null) {
-            throw new RuntimeException("订单不存在");
-        }
-
-        // 验证状态转换是否合法
-        validateStatusTransition(currentOrder.getStatus(), request.getStatus());
-
-        // 更新订单状态
-        int result = orderMapper.updateStatus(request.getOrderId(), request.getStatus(), LocalDateTime.now());
-        if (result == 0) {
-            throw new RuntimeException("更新订单状态失败");
-        }
-
-        // TODO: 记录订单状态变更日志
-        // logOrderStatusChange(request.getOrderId(), currentOrder.getStatus(), request.getStatus(), request.getNote());
-    }
-
-    /**
-     * 验证状态转换是否合法
-     */
-    private void validateStatusTransition(String fromStatus, String toStatus) {
-        // 如果状态相同，不需要更新
-        if (fromStatus.equals(toStatus)) {
-            throw new RuntimeException("订单状态未发生变化");
-        }
-
-        // 定义合法的状态转换
-        switch (fromStatus) {
-            case "CREATED":
-                if (!Arrays.asList("ASSIGNED", "CANCELED").contains(toStatus)) {
-                    throw new RuntimeException("待分配订单只能分配给阿姨或取消");
-                }
-                break;
-            case "ASSIGNED":
-                if (!Arrays.asList("DOING", "CANCELED").contains(toStatus)) {
-                    throw new RuntimeException("已分配订单只能开始服务或取消");
-                }
-                break;
-            case "DOING":
-                if (!Arrays.asList("DONE", "CANCELED").contains(toStatus)) {
-                    throw new RuntimeException("服务中订单只能完成或取消");
-                }
-                break;
-            case "DONE":
-                throw new RuntimeException("已完成订单无法再次修改状态");
-            case "CANCELED":
-                throw new RuntimeException("已取消订单无法再次修改状态");
-            default:
-                throw new RuntimeException("未知的订单状态");
-        }
-    }
 }

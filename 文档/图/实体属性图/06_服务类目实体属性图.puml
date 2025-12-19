@@ -1,0 +1,24 @@
+@startuml 服务类目实体属性图
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam rectangle {
+    BackgroundColor white
+    BorderColor black
+}
+skinparam usecase {
+    BackgroundColor white
+    BorderColor black
+}
+
+rectangle "服务类目" as center
+
+usecase "<u>id</u>" as id
+usecase "parent_id" as parentId
+usecase "name" as name
+usecase "sort" as sort
+
+center -- id
+center -- parentId
+center -- name
+center -- sort
+@enduml

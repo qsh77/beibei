@@ -3,7 +3,11 @@ package com.beibeijava.service;
 import com.beibeijava.dto.UpdateUserStatusRequest;
 import com.beibeijava.dto.UserQueryRequest;
 import com.beibeijava.entity.User;
+import com.beibeijava.entity.UserProfile;
+import com.beibeijava.entity.Worker;
 import com.beibeijava.mapper.UserMapper;
+import com.beibeijava.mapper.UserProfileMapper;
+import com.beibeijava.mapper.WorkerMapper;
 import com.beibeijava.vo.PageResult;
 import com.beibeijava.vo.UserDetailVO;
 import com.beibeijava.vo.UserListVO;
@@ -24,6 +28,8 @@ import java.util.List;
 public class AdminUserService {
 
     private final UserMapper userMapper;
+    private final UserProfileMapper userProfileMapper;
+    private final WorkerMapper workerMapper;
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -52,8 +58,7 @@ public class AdminUserService {
                 request.getStartDate(),
                 request.getEndDate(),
                 offset,
-                request.getSize()
-        );
+                request.getSize());
 
         // 查询总数
         Long total = userMapper.countUsers(
@@ -61,8 +66,7 @@ public class AdminUserService {
                 request.getRole(),
                 request.getStatus(),
                 request.getStartDate(),
-                request.getEndDate()
-        );
+                request.getEndDate());
 
         return new PageResult<>(users, total, request.getPage(), request.getSize());
     }
@@ -155,7 +159,7 @@ public class AdminUserService {
         }
 
         // 验证角色有效性
-        if (!"USER".equals(newRole) && !"WORKER".equals(newRole)) {
+        if (!"USER".equals(newRole) && !"WORKER".equals(newRole) && !"ADMIN".equals(newRole)) {
             throw new RuntimeException("无效的角色类型");
         }
 
@@ -179,6 +183,45 @@ public class AdminUserService {
         int result = userMapper.updateRole(userId, newRole, LocalDateTime.now());
         if (result <= 0) {
             throw new RuntimeException("更新用户角色失败");
+        }
+
+        // 如果角色变更为阿姨，检查是否需要创建阿姨记录
+        if ("WORKER".equals(newRole)) {
+            Worker existingWorker = workerMapper.findByUserId(userId);
+            if (existingWorker == null) {
+                Worker worker = new Worker();
+                worker.setUserId(userId);
+                worker.setLevel(1); // 默认1级
+                worker.setYears(0);
+                worker.setBio("新晋阿姨");
+                worker.setScore(new java.math.BigDecimal("5.0")); // 默认评分5.0
+                worker.setStatus(1); // 默认启用
+                workerMapper.insert(worker);
+            }
+        }
+
+        // 根据新角色更新默认头像
+        UserProfile profile = userProfileMapper.selectById(userId);
+        if (profile != null) {
+            String defaultAvatar;
+            switch (newRole) {
+                case "WORKER":
+                    defaultAvatar = "/uploads/avatars/default/worker.jpg";
+                    break;
+                case "ADMIN":
+                    defaultAvatar = "/uploads/avatars/default/admin.jpg";
+                    break;
+                default: // USER
+                    defaultAvatar = "/uploads/avatars/default/user1.jpeg";
+                    break;
+            }
+
+            // 只有当用户使用的是默认头像时才更新
+            if (profile.getAvatar() == null ||
+                    profile.getAvatar().startsWith("/uploads/avatars/default/")) {
+                profile.setAvatar(defaultAvatar);
+                userProfileMapper.update(profile);
+            }
         }
     }
 
@@ -245,19 +288,44 @@ public class AdminUserService {
         private Long todayNewUsers;
 
         // Getters and Setters
-        public Long getTotalUsers() { return totalUsers; }
-        public void setTotalUsers(Long totalUsers) { this.totalUsers = totalUsers; }
+        public Long getTotalUsers() {
+            return totalUsers;
+        }
 
-        public Long getNormalUsers() { return normalUsers; }
-        public void setNormalUsers(Long normalUsers) { this.normalUsers = normalUsers; }
+        public void setTotalUsers(Long totalUsers) {
+            this.totalUsers = totalUsers;
+        }
 
-        public Long getWorkers() { return workers; }
-        public void setWorkers(Long workers) { this.workers = workers; }
+        public Long getNormalUsers() {
+            return normalUsers;
+        }
 
-        public Long getDisabledUsers() { return disabledUsers; }
-        public void setDisabledUsers(Long disabledUsers) { this.disabledUsers = disabledUsers; }
+        public void setNormalUsers(Long normalUsers) {
+            this.normalUsers = normalUsers;
+        }
 
-        public Long getTodayNewUsers() { return todayNewUsers; }
-        public void setTodayNewUsers(Long todayNewUsers) { this.todayNewUsers = todayNewUsers; }
+        public Long getWorkers() {
+            return workers;
+        }
+
+        public void setWorkers(Long workers) {
+            this.workers = workers;
+        }
+
+        public Long getDisabledUsers() {
+            return disabledUsers;
+        }
+
+        public void setDisabledUsers(Long disabledUsers) {
+            this.disabledUsers = disabledUsers;
+        }
+
+        public Long getTodayNewUsers() {
+            return todayNewUsers;
+        }
+
+        public void setTodayNewUsers(Long todayNewUsers) {
+            this.todayNewUsers = todayNewUsers;
+        }
     }
 }

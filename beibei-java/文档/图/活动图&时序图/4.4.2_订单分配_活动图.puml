@@ -1,0 +1,35 @@
+@startuml
+skinparam backgroundColor transparent
+skinparam monochrome true
+title 订单分配功能活动图
+
+|管理员|
+start
+:进入订单管理页面;
+:筛选待分配订单;
+
+if (是否有待分配订单?) then (是)
+  :选择订单查看详情;
+  :点击分配订单;
+  |系统|
+  :获取可用阿姨列表;
+  |管理员|
+
+  if (是否有合适阿姨?) then (是)
+    :选择目标阿姨;
+    :确认分配;
+    |系统|
+    :更新订单状态为"已接单";
+    :记录分配的阿姨ID;
+    |管理员|
+    :分配成功;
+  else (否)
+    :返回订单列表;
+    note right: 等待后续处理
+  endif
+else (否)
+  :无待分配订单;
+endif
+
+stop
+@enduml

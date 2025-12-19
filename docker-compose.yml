@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  beibei-mysql:
+    image: mysql:8.0
+    container_name: beibei-mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: beibei
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_TCP_PORT: 3306
+      TZ: Asia/Shanghai
+    ports:
+      - "3307:3306" # Expose on 3307 to avoid conflict with local MySQL if generic
+    volumes:
+      - mysqldata:/var/lib/mysql
+      # Mount SQL files in order
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/01_init.sql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  beibei-redis:
+    image: redis:7
+    container_name: beibei-redis
+    restart: always
+    ports:
+      - "6380:6379" # Expose on 6380 to avoid conflict
+    volumes:
+      - redisdata:/data
+
+  beibei-backend:
+    build:
+      context: ./beibei-java
+      dockerfile: Dockerfile
+    container_name: beibei-backend
+    restart: always
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://beibei-mysql:3306/beibei?useSSL=false&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATA_REDIS_HOST: beibei-redis
+      SPRING_DATA_REDIS_PORT: 6379
+      TZ: Asia/Shanghai
+    ports:
+      - "8080:8080"
+    depends_on:
+      - beibei-mysql
+      - beibei-redis
+    volumes:
+      - ./uploads:/app/uploads # Persist uploads
+
+  beibei-admin:
+    build:
+      context: ./beibei-front-admin
+      dockerfile: Dockerfile
+    container_name: beibei-admin
+    restart: always
+    ports:
+      - "3001:80"
+    depends_on:
+      - beibei-backend
+
+  beibei-web:
+    build:
+      context: ./beibei-front-web
+      dockerfile: Dockerfile
+    container_name: beibei-web
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - beibei-backend
+
+volumes:
+  mysqldata:
+  redisdata:

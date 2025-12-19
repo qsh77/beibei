@@ -26,53 +26,57 @@ import java.util.Arrays;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
-    
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    
+
     public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
-    
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            // 禁用 CSRF
-            .csrf(AbstractHttpConfigurer::disable)
-            // 配置 CORS
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            // 配置会话管理
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            // 添加 JWT 过滤器
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-            // 配置授权规则
-            .authorizeHttpRequests(auth -> auth
-                // 允许所有OPTIONS请求（CORS预检）
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                // 允许访问的路径
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/v3/api-docs/**").permitAll()
-                .requestMatchers("/swagger-ui/**").permitAll()
-                .requestMatchers("/swagger-ui.html").permitAll()
-                .requestMatchers("/doc.html").permitAll()
-                // 允许访问上传的静态资源
-                .requestMatchers("/avatars/**").permitAll()
-                .requestMatchers("/uploads/**").permitAll()
-                // 临时允许访问统计接口用于测试
-                .requestMatchers("/api/admin/stats/**").permitAll()
-                // 管理员路径需要 ADMIN 角色
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                // 其他请求需要认证
-                .anyRequest().authenticated()
-            );
-        
+                // 禁用 CSRF
+                .csrf(AbstractHttpConfigurer::disable)
+                // 配置 CORS
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                // 配置会话管理
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 添加 JWT 过滤器
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                // 配置授权规则
+                .authorizeHttpRequests(auth -> auth
+                        // 允许所有OPTIONS请求（CORS预检）
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // 允许访问根路径
+                        .requestMatchers("/").permitAll()
+                        // 允许访问的路径
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
+                        .requestMatchers("/doc.html").permitAll()
+                        // 允许访问上传的静态资源
+                        .requestMatchers("/avatars/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/files/**").permitAll()
+                        // 允许访问服务和类目接口 (公开访问)
+                        .requestMatchers(HttpMethod.GET, "/api/services/**").permitAll()
+                        // 临时允许访问统计接口用于测试
+                        .requestMatchers("/api/admin/stats/**").permitAll()
+                        // 管理员路径需要 ADMIN 角色
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // 其他请求需要认证
+                        .anyRequest().authenticated());
+
         return http.build();
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -80,7 +84,7 @@ public class SecurityConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;

@@ -1,0 +1,30 @@
+@startuml 订单日志实体属性图
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam rectangle {
+    BackgroundColor white
+    BorderColor black
+}
+skinparam usecase {
+    BackgroundColor white
+    BorderColor black
+}
+
+rectangle "订单日志" as center
+
+usecase "<u>id</u>" as id
+usecase "order_id" as orderId
+usecase "from_status" as fromStatus
+usecase "to_status" as toStatus
+usecase "op_by" as opBy
+usecase "note" as note
+usecase "created_at" as createdAt
+
+center -- id
+center -- orderId
+center -- fromStatus
+center -- toStatus
+center -- opBy
+center -- note
+center -- createdAt
+@enduml

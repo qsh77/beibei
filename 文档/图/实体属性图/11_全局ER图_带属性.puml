@@ -1,0 +1,147 @@
+@startuml 全局ER图
+' 贝贝家政系统 - 数据库全局E-R图
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+
+skinparam entity {
+    BackgroundColor white
+    BorderColor black
+}
+
+entity "user\n(用户表)" as user {
+    + id <<PK>>
+    --
+    phone
+    password_hash
+    role
+    status
+    created_at
+    updated_at
+}
+
+entity "user_profile\n(用户资料表)" as user_profile {
+    + user_id <<PK,FK>>
+    --
+    name
+    gender
+    birthday
+    avatar
+    email
+    address
+}
+
+entity "user_address\n(用户地址表)" as user_address {
+    + id <<PK>>
+    --
+    # user_id <<FK>>
+    contact_name
+    contact_phone
+    province
+    city
+    district
+    detail
+    is_default
+    created_at
+}
+
+entity "worker\n(阿姨表)" as worker {
+    + id <<PK>>
+    --
+    # user_id <<FK>>
+    level
+    years
+    bio
+    score
+    status
+}
+
+entity "worker_schedule\n(阿姨档期表)" as worker_schedule {
+    + id <<PK>>
+    --
+    # worker_id <<FK>>
+    date
+    time_slot
+    status
+    created_at
+}
+
+entity "service_category\n(服务类目表)" as service_category {
+    + id <<PK>>
+    --
+    # parent_id <<FK>>
+    name
+    sort
+}
+
+entity "service\n(服务表)" as service {
+    + id <<PK>>
+    --
+    # category_id <<FK>>
+    name
+    description
+    base_price
+    unit
+    status
+    hot
+    rating
+    created_at
+}
+
+entity "order\n(订单表)" as order {
+    + id <<PK>>
+    --
+    order_no
+    # customer_id <<FK>>
+    # worker_id <<FK>>
+    # service_id <<FK>>
+    schedule_date
+    time_slot
+    # address_id <<FK>>
+    address_text
+    amount
+    status
+    remark
+    created_at
+    updated_at
+}
+
+entity "order_log\n(订单日志表)" as order_log {
+    + id <<PK>>
+    --
+    # order_id <<FK>>
+    from_status
+    to_status
+    # op_by <<FK>>
+    note
+    created_at
+}
+
+entity "review\n(评价表)" as review {
+    + id <<PK>>
+    --
+    # order_id <<FK>>
+    rating
+    content
+    imgs
+    # created_by <<FK>>
+    created_at
+}
+
+user ||--|| user_profile : "1:1"
+user ||--o{ user_address : "1:N"
+user ||--o| worker : "1:1"
+worker ||--o{ worker_schedule : "1:N"
+service_category ||--o{ service_category : "1:N"
+service_category ||--o{ service : "1:N"
+user ||--o{ order : "1:N"
+worker ||--o{ order : "1:N"
+service ||--o{ order : "1:N"
+user_address ||--o{ order : "1:N"
+order ||--o{ order_log : "1:N"
+order ||--o| review : "1:1"
+user ||--o{ order_log : "1:N"
+user ||--o{ review : "1:N"
+
+@enduml

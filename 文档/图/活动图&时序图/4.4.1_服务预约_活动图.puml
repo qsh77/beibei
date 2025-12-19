@@ -1,0 +1,40 @@
+@startuml
+skinparam backgroundColor transparent
+skinparam monochrome true
+title 服务预约功能活动图
+
+|用户|
+start
+:浏览服务列表;
+:筛选/搜索服务;
+:查看服务详情;
+
+if (是否选择该服务?) then (是)
+  :选择服务时间;
+  :选择服务地址;
+
+  if (是否需要新增地址?) then (是)
+    :新增服务地址;
+  else (否)
+  endif
+
+  :确认订单信息;
+
+  if (信息是否正确?) then (是)
+    :提交订单;
+    |系统|
+    :创建订单记录;
+    :设置状态为"等待抢单";
+    |用户|
+    :订单创建成功;
+  else (否)
+    :返回修改;
+    stop
+  endif
+else (否)
+  :返回浏览服务列表;
+  stop
+endif
+
+stop
+@enduml

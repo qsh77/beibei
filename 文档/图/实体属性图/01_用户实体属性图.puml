@@ -1,0 +1,30 @@
+@startuml 用户实体属性图
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam rectangle {
+    BackgroundColor white
+    BorderColor black
+}
+skinparam usecase {
+    BackgroundColor white
+    BorderColor black
+}
+
+rectangle "用户" as center
+
+usecase "<u>id</u>" as id
+usecase "phone" as phone
+usecase "password_hash" as password
+usecase "role" as role
+usecase "status" as status
+usecase "created_at" as createdAt
+usecase "updated_at" as updatedAt
+
+center -- id
+center -- phone
+center -- password
+center -- role
+center -- status
+center -- createdAt
+center -- updatedAt
+@enduml

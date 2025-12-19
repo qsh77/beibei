@@ -1,9 +1,9 @@
 package com.beibeijava.controller;
 
 import com.beibeijava.common.Result;
-import com.beibeijava.entity.Order;
 import com.beibeijava.service.WorkerOrderService;
 import com.beibeijava.vo.OrderDetailVO;
+import com.beibeijava.vo.OrderListVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,9 +27,20 @@ public class WorkerOrderController {
 
     @GetMapping
     @Operation(summary = "获取阿姨的订单列表", description = "获取分配给当前阿姨的订单列表")
-    public Result<List<Order>> getWorkerOrders() {
+    public Result<List<OrderListVO>> getWorkerOrders() {
         try {
-            List<Order> orders = workerOrderService.getWorkerOrders();
+            List<OrderListVO> orders = workerOrderService.getWorkerOrders();
+            return Result.success("获取成功", orders);
+        } catch (Exception e) {
+            return Result.error(e.getMessage());
+        }
+    }
+
+    @GetMapping("/available")
+    @Operation(summary = "获取可接单的订单列表", description = "根据阿姨档期过滤，获取可以接单的订单列表")
+    public Result<List<OrderListVO>> getAvailableOrders() {
+        try {
+            List<OrderListVO> orders = workerOrderService.getAvailableOrders();
             return Result.success("获取成功", orders);
         } catch (Exception e) {
             return Result.error(e.getMessage());
@@ -55,6 +66,18 @@ public class WorkerOrderController {
         try {
             workerOrderService.acceptOrder(id);
             return Result.success("订单已接受", "订单状态已更新为服务中");
+        } catch (Exception e) {
+            return Result.error(e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}/take")
+    @Operation(summary = "阿姨接单", description = "阿姨主动接取可接的订单")
+    public Result<String> takeOrder(
+            @Parameter(description = "订单ID") @PathVariable Long id) {
+        try {
+            workerOrderService.takeOrder(id);
+            return Result.success("接单成功", "订单已接取，状态已更新为已分配");
         } catch (Exception e) {
             return Result.error(e.getMessage());
         }

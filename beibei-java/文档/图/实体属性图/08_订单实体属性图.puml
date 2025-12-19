@@ -1,0 +1,44 @@
+@startuml 订单实体属性图
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam rectangle {
+    BackgroundColor white
+    BorderColor black
+}
+skinparam usecase {
+    BackgroundColor white
+    BorderColor black
+}
+
+rectangle "订单" as center
+
+usecase "<u>id</u>" as id
+usecase "order_no" as orderNo
+usecase "customer_id" as customerId
+usecase "worker_id" as workerId
+usecase "service_id" as serviceId
+usecase "schedule_date" as scheduleDate
+usecase "time_slot" as timeSlot
+usecase "address_id" as addressId
+usecase "address_text" as addressText
+usecase "amount" as amount
+usecase "status" as status
+usecase "remark" as remark
+usecase "created_at" as createdAt
+usecase "updated_at" as updatedAt
+
+center -- id
+center -- orderNo
+center -- customerId
+center -- workerId
+center -- serviceId
+center -- scheduleDate
+center -- timeSlot
+center -- addressId
+center -- addressText
+center -- amount
+center -- status
+center -- remark
+center -- createdAt
+center -- updatedAt
+@enduml

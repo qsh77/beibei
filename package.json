@@ -1,0 +1,15 @@
+{
+  "name": "beibei-front-monorepo",
+  "private": true,
+  "scripts": {
+    "install": "npm install --workspaces",
+    "dev:web": "npm --workspace beibei-front-web run dev",
+    "build:web": "npm --workspace beibei-front-web run build",
+    "dev:admin": "npm --workspace beibei-front-admin run dev",
+    "build:admin": "npm --workspace beibei-front-admin run build"
+  },
+  "workspaces": [
+    "beibei-front-web",
+    "beibei-front-admin"
+  ]
+}

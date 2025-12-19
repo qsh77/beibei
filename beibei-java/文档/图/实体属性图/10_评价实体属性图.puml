@@ -1,0 +1,30 @@
+@startuml 评价实体属性图
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam rectangle {
+    BackgroundColor white
+    BorderColor black
+}
+skinparam usecase {
+    BackgroundColor white
+    BorderColor black
+}
+
+rectangle "评价" as center
+
+usecase "<u>id</u>" as id
+usecase "order_id" as orderId
+usecase "rating" as rating
+usecase "content" as content
+usecase "imgs" as imgs
+usecase "created_by" as createdBy
+usecase "created_at" as createdAt
+
+center -- id
+center -- orderId
+center -- rating
+center -- content
+center -- imgs
+center -- createdBy
+center -- createdAt
+@enduml

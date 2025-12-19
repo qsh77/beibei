@@ -2,7 +2,6 @@ package com.beibeijava.controller;
 
 import com.beibeijava.common.Result;
 import com.beibeijava.dto.OrderQueryRequest;
-import com.beibeijava.dto.UpdateOrderStatusRequest;
 import com.beibeijava.service.AdminOrderService;
 import com.beibeijava.vo.OrderDetailVO;
 import com.beibeijava.vo.OrderListVO;
@@ -62,14 +61,4 @@ public class AdminOrderController {
         }
     }
 
-    @PutMapping("/status")
-    @Operation(summary = "更新订单状态", description = "管理员更新订单状态")
-    public Result<String> updateOrderStatus(@Valid @RequestBody UpdateOrderStatusRequest request) {
-        try {
-            adminOrderService.updateOrderStatus(request);
-            return Result.success("订单状态更新成功", "状态已更新");
-        } catch (Exception e) {
-            return Result.error(e.getMessage());
-        }
-    }
 }

@@ -85,6 +85,7 @@ public class AuthController {
             userInfo.setPhone(user.getPhone());
             userInfo.setRole(user.getRole());
             userInfo.setName(profile != null ? profile.getName() : "用户");
+            userInfo.setAvatar(profile != null ? profile.getAvatar() : null);
 
             return Result.success("获取成功", userInfo);
         } catch (Exception e) {
@@ -97,4 +98,5 @@ public class AuthController {
     public Result<String> test() {
         return Result.success("接口连通正常");
     }
+
 }

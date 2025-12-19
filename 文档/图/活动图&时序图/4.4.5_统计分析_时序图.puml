@@ -1,0 +1,56 @@
+@startuml
+skinparam backgroundColor transparent
+skinparam monochrome true
+title 统计分析功能时序图
+
+actor 管理员
+participant "管理端页面\nadmin/Statistics.vue" as Frontend
+participant "StatsController" as SC
+participant "StatsService" as SS
+database "数据库" as DB
+
+管理员 -> Frontend: 进入统计分析页面
+
+== 并行加载数据 ==
+
+par 概览统计
+  Frontend -> SC: GET /api/admin/stats/overview
+  SC -> SS: getOverviewStats()
+  SS -> DB: SELECT COUNT/SUM (用户数、订单数、收入等)
+  DB --> SS: 概览数据
+  SS --> SC: OverviewStatsVO
+  SC --> Frontend: 返回概览数据
+
+else 订单趋势
+  Frontend -> SC: GET /api/admin/stats/order/trend/daily?days=30
+  SC -> SS: getDailyOrderTrend(30)
+  SS -> DB: SELECT 日期, COUNT(*), SUM(amount) GROUP BY日期
+  DB --> SS: 趋势数据
+  SS --> SC: List<OrderTrendVO>
+  SC --> Frontend: 返回趋势数据
+
+else 订单状态分布
+  Frontend -> SC: GET /api/admin/stats/order/status
+  SC -> SS: getOrderStatusStats()
+  SS -> DB: SELECT status, COUNT(*) GROUP BY status
+  DB --> SS: 状态分布数据
+  SS --> SC: List<Map>
+  SC --> Frontend: 返回状态分布
+end
+
+Frontend -> Frontend: 使用ECharts渲染图表\n(柱状图、折线图、饼状图)
+Frontend --> 管理员: 展示统计图表
+
+== 切换时间范围 ==
+
+管理员 -> Frontend: 切换时间范围(7天)
+Frontend -> SC: GET /api/admin/stats/order/trend/daily?days=7
+SC -> SS: getDailyOrderTrend(7)
+SS -> DB: SELECT 近7天数据
+DB --> SS: 新趋势数据
+SS --> SC: List<OrderTrendVO>
+SC --> Frontend: 返回新数据
+Frontend -> Frontend: 更新图表
+Frontend --> 管理员: 展示更新后的图表
+
+@enduml

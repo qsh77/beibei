@@ -1,0 +1,36 @@
+@startuml 服务实体属性图
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam rectangle {
+    BackgroundColor white
+    BorderColor black
+}
+skinparam usecase {
+    BackgroundColor white
+    BorderColor black
+}
+
+rectangle "服务" as center
+
+usecase "<u>id</u>" as id
+usecase "category_id" as categoryId
+usecase "name" as name
+usecase "description" as description
+usecase "base_price" as basePrice
+usecase "unit" as unit
+usecase "status" as status
+usecase "hot" as hot
+usecase "rating" as rating
+usecase "created_at" as createdAt
+
+center -- id
+center -- categoryId
+center -- name
+center -- description
+center -- basePrice
+center -- unit
+center -- status
+center -- hot
+center -- rating
+center -- createdAt
+@enduml

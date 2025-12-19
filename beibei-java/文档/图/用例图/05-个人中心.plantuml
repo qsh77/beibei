@@ -1,0 +1,39 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam defaultFontName Microsoft YaHei
+
+title 个人中心用例图
+
+actor "普通用户" as User
+actor "家政阿姨" as Worker
+
+rectangle "个人中心" {
+    (个人中心) as main
+    (查看个人信息)
+    (修改个人信息)
+    (地址管理)
+
+    (修改头像)
+    (修改手机号)
+    (添加地址)
+    (编辑地址)
+    (删除地址)
+}
+
+User --> main
+Worker --> main
+
+main <.. (查看个人信息) : <<扩展>>
+main <.. (修改个人信息) : <<扩展>>
+main <.. (地址管理) : <<扩展>>
+
+(修改个人信息) <.. (修改头像) : <<扩展>>
+(修改个人信息) <.. (修改手机号) : <<扩展>>
+
+(地址管理) <.. (添加地址) : <<扩展>>
+(地址管理) <.. (编辑地址) : <<扩展>>
+(地址管理) <.. (删除地址) : <<扩展>>
+
+@enduml

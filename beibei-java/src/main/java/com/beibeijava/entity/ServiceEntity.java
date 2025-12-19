@@ -42,6 +42,11 @@ public class ServiceEntity {
      * 是否热门：1-是，0-否
      */
     private Integer hot;
+
+    /**
+     * 类目ID
+     */
+    private Long categoryId;
     
     /**
      * 评分

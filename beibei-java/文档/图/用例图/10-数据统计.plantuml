@@ -1,0 +1,41 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam defaultFontName Microsoft YaHei
+
+title 数据统计用例图
+
+actor "系统管理员" as Admin
+
+rectangle "数据统计" {
+    (数据统计) as main
+    (订单统计)
+    (收入统计)
+    (用户统计)
+    (阿姨绩效)
+
+    (按时间统计)
+    (按状态统计)
+    (收入趋势)
+    (新增用户统计)
+    (绩效排名)
+}
+
+Admin --> main
+
+main <.. (订单统计) : <<扩展>>
+main <.. (收入统计) : <<扩展>>
+main <.. (用户统计) : <<扩展>>
+main <.. (阿姨绩效) : <<扩展>>
+
+(订单统计) <.. (按时间统计) : <<扩展>>
+(订单统计) <.. (按状态统计) : <<扩展>>
+
+(收入统计) <.. (收入趋势) : <<扩展>>
+
+(用户统计) <.. (新增用户统计) : <<扩展>>
+
+(阿姨绩效) <.. (绩效排名) : <<扩展>>
+
+@enduml

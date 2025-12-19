@@ -1,0 +1,46 @@
+@startuml
+skinparam backgroundColor transparent
+skinparam monochrome true
+title 统计分析功能活动图
+
+|管理员|
+start
+:进入统计分析页面;
+
+|系统|
+fork
+  :加载概览统计;
+fork again
+  :加载订单趋势;
+fork again
+  :加载收入趋势;
+fork again
+  :加载订单状态分布;
+fork again
+  :加载热门服务排行;
+fork again
+  :加载活跃阿姨排行;
+end fork
+
+:数据加载完成;
+:渲染统计图表;
+
+|管理员|
+:查看统计数据;
+
+repeat
+  if (是否切换时间范围?) then (是)
+    |系统|
+    :重新加载趋势数据;
+    :更新图表;
+    |管理员|
+  endif
+
+  if (是否查看详情?) then (是)
+    :跳转到对应管理页面;
+  endif
+
+repeat while (继续查看?) is (是)
+
+stop
+@enduml

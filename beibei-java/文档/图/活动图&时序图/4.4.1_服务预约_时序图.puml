@@ -1,0 +1,37 @@
+@startuml
+skinparam backgroundColor transparent
+skinparam monochrome true
+title 服务预约功能时序图
+
+actor 用户
+participant "前端页面\nServices.vue" as Frontend
+participant "ServiceController" as SC
+participant "ServiceService" as SS
+participant "OrderController" as OC
+participant "OrderService" as OS
+database "数据库" as DB
+
+用户 -> Frontend: 访问服务列表
+Frontend -> SC: GET /api/services
+SC -> SS: getAllActiveServices()
+SS -> DB: SELECT * FROM service WHERE status=1
+DB --> SS: 服务列表数据
+SS --> SC: List<ServiceEntity>
+SC --> Frontend: 返回服务列表
+Frontend --> 用户: 展示服务列表
+
+用户 -> Frontend: 选择服务、时间、地址
+用户 -> Frontend: 提交订单
+Frontend -> OC: POST /api/orders
+OC -> OS: createOrder(request)
+OS -> DB: 验证服务存在
+DB --> OS: 服务信息
+OS -> DB: 验证地址归属
+DB --> OS: 地址信息
+OS -> DB: INSERT INTO order
+DB --> OS: 订单创建成功
+OS --> OC: Order对象
+OC --> Frontend: 返回订单信息
+Frontend --> 用户: 显示订单创建成功
+
+@enduml

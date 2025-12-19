@@ -1,0 +1,38 @@
+@startuml
+skinparam backgroundColor transparent
+skinparam monochrome true
+title 服务评价功能活动图
+
+|用户|
+start
+:进入我的订单页面;
+:筛选已完成订单;
+
+if (是否有已完成订单?) then (是)
+  :选择订单;
+
+  if (订单是否已评价?) then (是)
+    :查看已有评价;
+  else (否)
+    :点击评价按钮;
+    :填写评分(1-5星);
+    :填写评价内容;
+
+    if (是否提交?) then (是)
+      :提交评价;
+      |系统|
+      :保存评价记录;
+      :更新阿姨评分;
+      |用户|
+      :评价成功;
+    else (否)
+      :取消;
+      :返回订单列表;
+    endif
+  endif
+else (否)
+  :无已完成订单;
+endif
+
+stop
+@enduml

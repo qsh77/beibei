@@ -1,0 +1,161 @@
+@startuml 全局ER图_完整版
+' 贝贝家政系统 - 数据库全局E-R图（基于实际数据库表结构）
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam linetype ortho
+
+skinparam entity {
+    BackgroundColor white
+    BorderColor black
+}
+
+' ========== 用户相关 ==========
+entity "user\n(用户表)" as user {
+    + id : BIGINT <<PK>>
+    --
+    phone : VARCHAR(20)
+    password_hash : VARCHAR(100)
+    role : ENUM
+    status : TINYINT
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "user_profile\n(用户资料表)" as user_profile {
+    + user_id : BIGINT <<PK,FK>>
+    --
+    name : VARCHAR(50)
+    gender : ENUM
+    birthday : DATE
+    avatar : VARCHAR(255)
+    email : VARCHAR(100)
+    address : VARCHAR(255)
+}
+
+entity "user_address\n(用户地址表)" as user_address {
+    + id : BIGINT <<PK>>
+    --
+    # user_id : BIGINT <<FK>>
+    contact_name : VARCHAR(50)
+    contact_phone : VARCHAR(20)
+    province : VARCHAR(50)
+    city : VARCHAR(50)
+    district : VARCHAR(50)
+    detail : VARCHAR(200)
+    is_default : TINYINT
+    created_at : TIMESTAMP
+}
+
+' ========== 阿姨相关 ==========
+entity "worker\n(阿姨表)" as worker {
+    + id : BIGINT <<PK>>
+    --
+    # user_id : BIGINT <<FK>>
+    level : TINYINT
+    years : SMALLINT
+    bio : VARCHAR(500)
+    score : DECIMAL(3,2)
+    status : TINYINT
+}
+
+entity "worker_schedule\n(阿姨档期表)" as worker_schedule {
+    + id : BIGINT <<PK>>
+    --
+    # worker_id : BIGINT <<FK>>
+    date : DATE
+    time_slot : VARCHAR(20)
+    status : ENUM
+    created_at : TIMESTAMP
+}
+
+' ========== 服务相关 ==========
+entity "service_category\n(服务类目表)" as service_category {
+    + id : BIGINT <<PK>>
+    --
+    # parent_id : BIGINT <<FK>>
+    name : VARCHAR(50)
+    sort : INT
+}
+
+entity "service\n(服务表)" as service {
+    + id : BIGINT <<PK>>
+    --
+    # category_id : BIGINT <<FK>>
+    name : VARCHAR(100)
+    description : VARCHAR(500)
+    base_price : DECIMAL(10,2)
+    unit : ENUM
+    status : TINYINT
+    hot : TINYINT
+    rating : DECIMAL(3,2)
+    created_at : TIMESTAMP
+}
+
+' ========== 订单相关 ==========
+entity "order\n(订单表)" as order {
+    + id : BIGINT <<PK>>
+    --
+    order_no : VARCHAR(40)
+    # customer_id : BIGINT <<FK>>
+    # worker_id : BIGINT <<FK>>
+    # service_id : BIGINT <<FK>>
+    schedule_date : DATE
+    time_slot : VARCHAR(20)
+    # address_id : BIGINT <<FK>>
+    address_text : VARCHAR(300)
+    amount : DECIMAL(10,2)
+    status : ENUM
+    remark : VARCHAR(255)
+    created_at : TIMESTAMP
+    updated_at : TIMESTAMP
+}
+
+entity "order_log\n(订单日志表)" as order_log {
+    + id : BIGINT <<PK>>
+    --
+    # order_id : BIGINT <<FK>>
+    from_status : ENUM
+    to_status : ENUM
+    # op_by : BIGINT <<FK>>
+    note : VARCHAR(255)
+    created_at : TIMESTAMP
+}
+
+entity "review\n(评价表)" as review {
+    + id : BIGINT <<PK>>
+    --
+    # order_id : BIGINT <<FK>>
+    rating : TINYINT
+    content : VARCHAR(500)
+    imgs : JSON
+    # created_by : BIGINT <<FK>>
+    created_at : TIMESTAMP
+}
+
+' ========== 关系定义 ==========
+' 用户相关
+user ||--|| user_profile : "1:1 拥有"
+user ||--o{ user_address : "1:N 拥有"
+user ||--o| worker : "1:1 成为"
+
+' 阿姨相关
+worker ||--o{ worker_schedule : "1:N 设置"
+
+' 服务相关
+service_category ||--o{ service_category : "1:N 自关联"
+service_category ||--o{ service : "1:N 包含"
+
+' 订单相关
+user ||--o{ order : "1:N 下单"
+worker ||--o{ order : "1:N 服务"
+service ||--o{ order : "1:N 被预约"
+user_address ||--o{ order : "1:N 配送到"
+order ||--o{ order_log : "1:N 记录"
+order ||--o| review : "1:1 评价"
+
+' 操作人
+user ||--o{ order_log : "1:N 操作"
+user ||--o{ review : "1:N 发表"
+
+@enduml

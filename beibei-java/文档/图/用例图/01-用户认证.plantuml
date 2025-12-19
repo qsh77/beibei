@@ -1,0 +1,42 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam defaultFontName Microsoft YaHei
+
+title 用户认证用例图
+
+actor "普通用户" as User
+actor "家政阿姨" as Worker
+actor "系统管理员" as Admin
+
+rectangle "用户认证" {
+    (用户认证) as main
+    (用户登录)
+    (用户注册)
+    (密码修改)
+
+    (账号密码登录)
+    (记住登录状态)
+    (填写基本信息)
+    (验证手机号)
+    (验证原密码)
+}
+
+User --> main
+Worker --> main
+Admin --> main
+
+main <.. (用户登录) : <<扩展>>
+main <.. (用户注册) : <<扩展>>
+main <.. (密码修改) : <<扩展>>
+
+(用户登录) <.. (账号密码登录) : <<扩展>>
+(用户登录) <.. (记住登录状态) : <<扩展>>
+
+(用户注册) <.. (填写基本信息) : <<包含>>
+(用户注册) <.. (验证手机号) : <<包含>>
+
+(密码修改) <.. (验证原密码) : <<包含>>
+
+@enduml

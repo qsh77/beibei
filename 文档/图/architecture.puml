@@ -1,0 +1,98 @@
+@startuml 贝贝家政服务平台技术架构图
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontSize 14
+
+skinparam rectangle {
+    RoundCorner 10
+    BorderColor #333333
+    FontColor #333333
+}
+
+title 贝贝家政服务平台技术架构图\n
+
+' 定义统一宽度的容器
+together {
+    ' ===== 前端UI层 =====
+    rectangle "**前端UI层**" as frontend #E3F2FD {
+        rectangle "Vue 3" as vue #FFFFFF
+        rectangle "HTML/CSS" as html #FFFFFF
+        rectangle "Element Plus" as el #FFFFFF
+        rectangle "Vite" as vite #FFFFFF
+    }
+
+    ' ===== 展示层 =====
+    rectangle "**展示层**" as presentation #FFF3E0 {
+        rectangle "Vue Router" as router #FFFFFF
+        rectangle "Axios" as axios #FFFFFF
+        rectangle "Pinia" as pinia #FFFFFF
+    }
+
+    ' ===== 业务层 =====
+    rectangle "**业务层**" as business #E8F5E9 {
+        rectangle "Controller" as ctrl #FFFFFF
+        rectangle "Service" as svc #FFFFFF
+        rectangle "JWT认证" as jwt #FFFFFF
+        rectangle "权限控制" as auth #FFFFFF
+    }
+
+    ' ===== 框架支撑层 =====
+    rectangle "**框架支撑**" as framework #DCEDC8 {
+        rectangle "Spring Boot" as boot #FFFFFF
+        rectangle "Spring Security" as sec #FFFFFF
+        rectangle "Spring MVC" as mvc #FFFFFF
+    }
+
+    ' ===== 数据层 =====
+    rectangle "**数据层**" as data #F3E5F5 {
+        rectangle "MyBatis" as mybatis #FFFFFF
+        rectangle "Redis缓存" as redis #FFFFFF
+        rectangle "Mapper" as mapper #FFFFFF
+    }
+
+    ' ===== 数据库层 =====
+    rectangle "**数据库层**" as database #FFEBEE {
+        rectangle "MySQL 8.0" as mysql #FFFFFF
+        rectangle "Redis 8.2" as redisdb #FFFFFF
+    }
+}
+
+' 层内横向排列
+vue -[hidden]r- html
+html -[hidden]r- el
+el -[hidden]r- vite
+
+router -[hidden]r- axios
+axios -[hidden]r- pinia
+
+ctrl -[hidden]r- svc
+svc -[hidden]r- jwt
+jwt -[hidden]r- auth
+
+boot -[hidden]r- sec
+sec -[hidden]r- mvc
+
+mybatis -[hidden]r- redis
+redis -[hidden]r- mapper
+
+mysql -[hidden]r- redisdb
+
+' 层级关系 - 从上到下
+frontend -[hidden]d- presentation
+presentation -[hidden]d- business
+business -[hidden]d- framework
+framework -[hidden]d- data
+data -[hidden]d- database
+
+' 强制左右对齐
+vue -[hidden]d- router
+router -[hidden]d- ctrl
+ctrl -[hidden]d- boot
+boot -[hidden]d- mybatis
+mybatis -[hidden]d- mysql
+
+vite -[hidden]d- pinia
+auth -[hidden]d- mvc
+mapper -[hidden]d- redisdb
+
+@enduml

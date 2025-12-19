@@ -1,0 +1,40 @@
+@startuml
+skinparam backgroundColor transparent
+skinparam monochrome true
+title 订单分配功能时序图
+
+actor 管理员
+participant "管理端页面\nadmin/Orders.vue" as Frontend
+participant "AdminOrderController" as AOC
+participant "AdminOrderService" as AOS
+participant "AdminWorkerController" as AWC
+participant "AdminWorkerService" as AWS
+participant "OrderService" as OS
+database "数据库" as DB
+
+管理员 -> Frontend: 查看订单列表
+Frontend -> AOC: GET /api/admin/orders?status=CREATED
+AOC -> AOS: getOrderList(request)
+AOS -> DB: 分页查询待分配订单
+DB --> AOS: 订单列表
+AOS --> AOC: PageResult<OrderListVO>
+AOC --> Frontend: 返回订单列表
+Frontend --> 管理员: 展示待分配订单
+
+管理员 -> Frontend: 点击分配订单
+Frontend -> AWC: GET /api/admin/workers
+AWC -> AWS: getWorkerList()
+AWS -> DB: 查询可用阿姨
+DB --> AWS: 阿姨列表
+AWS --> AWC: PageResult<WorkerListVO>
+AWC --> Frontend: 返回阿姨列表
+Frontend --> 管理员: 展示可选阿姨
+
+管理员 -> Frontend: 选择阿姨并确认
+Frontend -> OS: PUT /api/orders/{id}/assign?workerId=xxx
+OS -> DB: UPDATE order SET worker_id=?, status='ASSIGNED'
+DB --> OS: 更新成功
+OS --> Frontend: 返回分配成功
+Frontend --> 管理员: 显示分配成功
+
+@enduml

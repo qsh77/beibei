@@ -1,0 +1,30 @@
+@startuml 阿姨实体属性图
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam rectangle {
+    BackgroundColor white
+    BorderColor black
+}
+skinparam usecase {
+    BackgroundColor white
+    BorderColor black
+}
+
+rectangle "阿姨" as center
+
+usecase "<u>id</u>" as id
+usecase "user_id" as userId
+usecase "level" as level
+usecase "years" as years
+usecase "bio" as bio
+usecase "score" as score
+usecase "status" as status
+
+center -- id
+center -- userId
+center -- level
+center -- years
+center -- bio
+center -- score
+center -- status
+@enduml

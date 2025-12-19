@@ -1,0 +1,89 @@
+@startuml 全局ER图
+' 贝贝家政系统 - 数据库全局E-R图
+' 实体用矩形，联系用菱形，联系属性标注在连线上
+
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam defaultTextAlignment center
+
+skinparam rectangle {
+    BackgroundColor white
+    BorderColor black
+}
+
+skinparam agent {
+    BackgroundColor white
+    BorderColor black
+}
+
+' ========== 实体定义（矩形）==========
+rectangle "用户" as user
+rectangle "用户资料" as user_profile
+rectangle "用户地址" as user_address
+rectangle "阿姨" as worker
+rectangle "阿姨档期" as worker_schedule
+rectangle "服务类目" as service_category
+rectangle "服务" as service
+rectangle "订单" as order
+rectangle "订单日志" as order_log
+rectangle "评价" as review
+
+' ========== 联系定义（菱形用agent模拟）==========
+agent "拥有" as rel_profile <<联系>>
+agent "拥有" as rel_address <<联系>>
+agent "成为" as rel_worker <<联系>>
+agent "设置" as rel_schedule <<联系>>
+agent "归属" as rel_category <<联系>>
+agent "下单" as rel_order_user <<联系>>
+agent "服务" as rel_order_worker <<联系>>
+agent "预约" as rel_order_service <<联系>>
+agent "配送" as rel_order_address <<联系>>
+agent "记录" as rel_log <<联系>>
+agent "评价" as rel_review <<联系>>
+
+' ========== 关系连接 ==========
+' 用户 1:1 用户资料
+user "1" -- rel_profile
+rel_profile -- "1" user_profile : user_id
+
+' 用户 1:N 用户地址
+user "1" -- rel_address
+rel_address -- "N" user_address : user_id
+
+' 用户 1:1 阿姨
+user "1" -- rel_worker
+rel_worker -- "1" worker : user_id
+
+' 阿姨 1:N 阿姨档期
+worker "1" -- rel_schedule
+rel_schedule -- "N" worker_schedule : worker_id
+
+' 服务类目 1:N 服务
+service_category "1" -- rel_category
+rel_category -- "N" service : category_id
+
+' 用户 1:N 订单（下单）
+user "1" -- rel_order_user
+rel_order_user -- "N" order : customer_id
+
+' 阿姨 1:N 订单（服务）
+worker "1" -- rel_order_worker
+rel_order_worker -- "N" order : worker_id
+
+' 服务 1:N 订单（预约）
+service "1" -- rel_order_service
+rel_order_service -- "N" order : service_id
+
+' 用户地址 1:N 订单（配送）
+user_address "1" -- rel_order_address
+rel_order_address -- "N" order : address_id
+
+' 订单 1:N 订单日志
+order "1" -- rel_log
+rel_log -- "N" order_log : order_id
+
+' 订单 1:1 评价
+order "1" -- rel_review
+rel_review -- "1" review : order_id
+
+@enduml

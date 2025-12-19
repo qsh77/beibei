@@ -1,0 +1,36 @@
+@startuml 用户地址实体属性图
+skinparam backgroundColor white
+skinparam shadowing false
+skinparam rectangle {
+    BackgroundColor white
+    BorderColor black
+}
+skinparam usecase {
+    BackgroundColor white
+    BorderColor black
+}
+
+rectangle "用户地址" as center
+
+usecase "<u>id</u>" as id
+usecase "user_id" as userId
+usecase "contact_name" as contactName
+usecase "contact_phone" as contactPhone
+usecase "province" as province
+usecase "city" as city
+usecase "district" as district
+usecase "detail" as detail
+usecase "is_default" as isDefault
+usecase "created_at" as createdAt
+
+center -- id
+center -- userId
+center -- contactName
+center -- contactPhone
+center -- province
+center -- city
+center -- district
+center -- detail
+center -- isDefault
+center -- createdAt
+@enduml

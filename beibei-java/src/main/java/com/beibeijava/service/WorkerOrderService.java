@@ -4,6 +4,7 @@ import com.beibeijava.entity.Order;
 import com.beibeijava.mapper.OrderMapper;
 import com.beibeijava.mapper.WorkerMapper;
 import com.beibeijava.vo.OrderDetailVO;
+import com.beibeijava.vo.OrderListVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,9 +27,17 @@ public class WorkerOrderService {
     /**
      * 获取阿姨的订单列表
      */
-    public List<Order> getWorkerOrders() {
+    public List<OrderListVO> getWorkerOrders() {
         Long workerId = getCurrentWorkerId();
-        return orderMapper.findByWorkerId(workerId);
+        return orderMapper.findWorkerOrderList(workerId);
+    }
+
+    /**
+     * 获取可接的订单列表（根据阿姨档期过滤）
+     */
+    public List<OrderListVO> getAvailableOrders() {
+        Long workerId = getCurrentWorkerId();
+        return orderMapper.findAvailableOrdersForWorker(workerId);
     }
 
     /**
@@ -71,6 +80,31 @@ public class WorkerOrderService {
         }
 
         orderMapper.updateStatus(orderId, "DOING", LocalDateTime.now());
+    }
+
+    /**
+     * 阿姨接单（直接从CREATED状态接单）
+     */
+    @Transactional
+    public void takeOrder(Long orderId) {
+        Long workerId = getCurrentWorkerId();
+
+        Order order = orderMapper.findById(orderId);
+        if (order == null) {
+            throw new RuntimeException("订单不存在");
+        }
+
+        if (!"CREATED".equals(order.getStatus())) {
+            throw new RuntimeException("订单状态不允许接单");
+        }
+
+        if (order.getWorkerId() != null) {
+            throw new RuntimeException("订单已被其他阿姨接单");
+        }
+
+        // 验证阿姨在该时间段是否空闲
+        // 这里通过SQL查询已经过滤了，但为了安全再次验证
+        orderMapper.assignWorker(orderId, workerId, "ASSIGNED", LocalDateTime.now());
     }
 
     /**

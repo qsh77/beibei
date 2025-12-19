@@ -1,0 +1,34 @@
+@startwbs
+skinparam BackgroundColor white
+skinparam RectangleBorderColor black
+skinparam DefaultFontName Microsoft YaHei
+
+* 前台用户端
+** 用户认证
+*** 用户注册
+*** 用户登录
+*** 获取用户信息
+** 个人中心
+*** 个人资料管理
+*** 密码修改
+*** 头像上传
+*** 地址管理
+**** 地址列表
+**** 新增地址
+**** 编辑地址
+**** 删除地址
+**** 设置默认
+** 服务浏览
+*** 服务列表
+*** 服务详情
+*** 热门服务
+*** 服务搜索
+** 订单管理
+*** 预约服务
+*** 订单列表
+*** 订单详情
+*** 取消订单
+** 评价
+*** 发表评价
+*** 查看评价
+@endwbs

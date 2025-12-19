@@ -1,0 +1,38 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam defaultFontName Microsoft YaHei
+
+title 工作管理用例图
+
+actor "家政阿姨" as Worker
+
+rectangle "工作管理" {
+    (工作管理) as main
+    (查看收益)
+    (收益明细)
+    (排班设置)
+
+    (收益概览)
+    (收益趋势)
+    (按时间筛选)
+    (设置工作时间)
+    (设置休息日)
+}
+
+Worker --> main
+
+main <.. (查看收益) : <<扩展>>
+main <.. (收益明细) : <<扩展>>
+main <.. (排班设置) : <<扩展>>
+
+(查看收益) <.. (收益概览) : <<扩展>>
+(查看收益) <.. (收益趋势) : <<扩展>>
+
+(收益明细) <.. (按时间筛选) : <<扩展>>
+
+(排班设置) <.. (设置工作时间) : <<扩展>>
+(排班设置) <.. (设置休息日) : <<扩展>>
+
+@enduml

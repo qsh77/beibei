@@ -20,19 +20,41 @@ public class WebConfig implements WebMvcConfigurer {
     @Value("${beibei.upload.avatar-path:avatars}")
     private String avatarPath;
 
+    @Value("${beibei.upload.files-path:files}")
+    private String filesPath;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 配置头像文件的静态资源访问 - 使用项目根目录的绝对路径
+        // 获取项目根目录的绝对路径
         String projectDir = System.getProperty("user.dir");
-        Path uploadBasePath = Paths.get(projectDir, uploadPath).toAbsolutePath();
-        String avatarLocation = "file:" + uploadBasePath.toString() + "/";
 
+        // 对于 beibei-java 子目录
+        String javaProjectDir = projectDir.endsWith("beibei-java") ? projectDir
+                : Paths.get(projectDir, "beibei-java").toString();
+
+        Path uploadBasePath = Paths.get(javaProjectDir, uploadPath).toAbsolutePath();
+        String uploadLocation = "file:" + uploadBasePath.toString() + "/";
+
+        System.out.println("项目目录: " + javaProjectDir);
+        System.out.println("上传文件根路径: " + uploadBasePath.toString());
+
+        // 配置 /avatars/** 路径
         registry.addResourceHandler("/" + avatarPath + "/**")
-                .addResourceLocations(avatarLocation + avatarPath + "/")
+                .addResourceLocations(uploadLocation + avatarPath + "/")
+                .setCachePeriod(3600); // 缓存1小时
+
+        // 配置 /files/** 路径（用于评价图片等）
+        registry.addResourceHandler("/" + filesPath + "/**")
+                .addResourceLocations(uploadLocation + filesPath + "/")
+                .setCachePeriod(3600); // 缓存1小时
+
+        // 配置 /uploads/** 路径（用于访问所有上传文件）
+        registry.addResourceHandler("/" + uploadPath + "/**")
+                .addResourceLocations(uploadLocation)
                 .setCachePeriod(3600); // 缓存1小时
 
         // 可以添加更多静态资源配置
         // registry.addResourceHandler("/static/**")
-        //         .addResourceLocations("classpath:/static/");
+        // .addResourceLocations("classpath:/static/");
     }
 }

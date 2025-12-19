@@ -56,9 +56,9 @@ public class AdminWorkerService {
                 request.getStatus(),
                 request.getMinScore(),
                 request.getMaxScore(),
+                request.getSortBy(),
                 offset,
-                request.getSize()
-        );
+                request.getSize());
 
         // 查询总数
         Long total = workerMapper.countWorkers(
@@ -66,8 +66,7 @@ public class AdminWorkerService {
                 request.getLevel(),
                 request.getStatus(),
                 request.getMinScore(),
-                request.getMaxScore()
-        );
+                request.getMaxScore());
 
         return new PageResult<>(workers, total, request.getPage(), request.getSize());
     }
@@ -104,10 +103,9 @@ public class AdminWorkerService {
         }
 
         // 更新阿姨信息
-        worker.setLevel(request.getLevel());
+        // level和score由系统根据评价自动计算，不允许手动修改
         worker.setYears(request.getYears());
         worker.setBio(request.getBio());
-        worker.setScore(request.getScore());
         worker.setStatus(request.getStatus());
 
         int result = workerMapper.update(worker);
@@ -267,10 +265,10 @@ public class AdminWorkerService {
         // 创建阿姨记录
         Worker worker = new Worker();
         worker.setUserId(userId);
-        worker.setLevel(level != null ? level : 1);
+        worker.setLevel(level != null ? level : 0);
         worker.setYears(years != null ? years : 0);
         worker.setBio(bio);
-        worker.setScore(new BigDecimal("5.00")); // 默认评分
+        worker.setScore(new BigDecimal("0.00")); // 初始评分为0，由客户评价决定
         worker.setStatus(1); // 默认启用
 
         int result = workerMapper.insert(worker);
@@ -353,9 +351,8 @@ public class AdminWorkerService {
 
         return workerMapper.findWorkerList(
                 keyword.trim(),
-                null, null, null, null,
-                0, limit
-        );
+                null, null, null, null, null,
+                0, limit);
     }
 
     /**
@@ -386,8 +383,8 @@ public class AdminWorkerService {
         long requiredOrders = newLevel * 10L; // 等级越高需要完成更多订单
 
         return worker.getYears() >= requiredYears
-               && worker.getScore().doubleValue() >= requiredScore
-               && worker.getCompletedOrders() >= requiredOrders;
+                && worker.getScore().doubleValue() >= requiredScore
+                && worker.getCompletedOrders() >= requiredOrders;
     }
 
     /**
@@ -407,37 +404,92 @@ public class AdminWorkerService {
         private Double minScore;
 
         // Getters and Setters
-        public Long getTotalWorkers() { return totalWorkers; }
-        public void setTotalWorkers(Long totalWorkers) { this.totalWorkers = totalWorkers; }
+        public Long getTotalWorkers() {
+            return totalWorkers;
+        }
 
-        public Long getActiveWorkers() { return activeWorkers; }
-        public void setActiveWorkers(Long activeWorkers) { this.activeWorkers = activeWorkers; }
+        public void setTotalWorkers(Long totalWorkers) {
+            this.totalWorkers = totalWorkers;
+        }
 
-        public Long getInactiveWorkers() { return inactiveWorkers; }
-        public void setInactiveWorkers(Long inactiveWorkers) { this.inactiveWorkers = inactiveWorkers; }
+        public Long getActiveWorkers() {
+            return activeWorkers;
+        }
 
-        public Long getLevel1Count() { return level1Count; }
-        public void setLevel1Count(Long level1Count) { this.level1Count = level1Count; }
+        public void setActiveWorkers(Long activeWorkers) {
+            this.activeWorkers = activeWorkers;
+        }
 
-        public Long getLevel2Count() { return level2Count; }
-        public void setLevel2Count(Long level2Count) { this.level2Count = level2Count; }
+        public Long getInactiveWorkers() {
+            return inactiveWorkers;
+        }
 
-        public Long getLevel3Count() { return level3Count; }
-        public void setLevel3Count(Long level3Count) { this.level3Count = level3Count; }
+        public void setInactiveWorkers(Long inactiveWorkers) {
+            this.inactiveWorkers = inactiveWorkers;
+        }
 
-        public Long getLevel4Count() { return level4Count; }
-        public void setLevel4Count(Long level4Count) { this.level4Count = level4Count; }
+        public Long getLevel1Count() {
+            return level1Count;
+        }
 
-        public Long getLevel5Count() { return level5Count; }
-        public void setLevel5Count(Long level5Count) { this.level5Count = level5Count; }
+        public void setLevel1Count(Long level1Count) {
+            this.level1Count = level1Count;
+        }
 
-        public Double getAvgScore() { return avgScore; }
-        public void setAvgScore(Double avgScore) { this.avgScore = avgScore; }
+        public Long getLevel2Count() {
+            return level2Count;
+        }
 
-        public Double getMaxScore() { return maxScore; }
-        public void setMaxScore(Double maxScore) { this.maxScore = maxScore; }
+        public void setLevel2Count(Long level2Count) {
+            this.level2Count = level2Count;
+        }
 
-        public Double getMinScore() { return minScore; }
-        public void setMinScore(Double minScore) { this.minScore = minScore; }
+        public Long getLevel3Count() {
+            return level3Count;
+        }
+
+        public void setLevel3Count(Long level3Count) {
+            this.level3Count = level3Count;
+        }
+
+        public Long getLevel4Count() {
+            return level4Count;
+        }
+
+        public void setLevel4Count(Long level4Count) {
+            this.level4Count = level4Count;
+        }
+
+        public Long getLevel5Count() {
+            return level5Count;
+        }
+
+        public void setLevel5Count(Long level5Count) {
+            this.level5Count = level5Count;
+        }
+
+        public Double getAvgScore() {
+            return avgScore;
+        }
+
+        public void setAvgScore(Double avgScore) {
+            this.avgScore = avgScore;
+        }
+
+        public Double getMaxScore() {
+            return maxScore;
+        }
+
+        public void setMaxScore(Double maxScore) {
+            this.maxScore = maxScore;
+        }
+
+        public Double getMinScore() {
+            return minScore;
+        }
+
+        public void setMinScore(Double minScore) {
+            this.minScore = minScore;
+        }
     }
 }

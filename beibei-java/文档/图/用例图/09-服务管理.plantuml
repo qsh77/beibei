@@ -1,0 +1,34 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam defaultFontName Microsoft YaHei
+
+title 服务管理用例图
+
+actor "系统管理员" as Admin
+
+rectangle "服务管理" {
+    (服务管理) as main
+    (查看服务列表)
+    (添加服务)
+    (修改服务)
+    (删除服务)
+    (上下架服务)
+
+    (填写服务信息)
+    (设置服务价格)
+}
+
+Admin --> main
+
+main <.. (查看服务列表) : <<扩展>>
+main <.. (添加服务) : <<扩展>>
+main <.. (修改服务) : <<扩展>>
+main <.. (删除服务) : <<扩展>>
+main <.. (上下架服务) : <<扩展>>
+
+(添加服务) <.. (填写服务信息) : <<包含>>
+(添加服务) <.. (设置服务价格) : <<包含>>
+
+@enduml
